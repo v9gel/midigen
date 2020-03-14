@@ -10,6 +10,9 @@
             <el-form-item label="Предотвращать повторы" prop="repeatControl">
                 <el-switch v-model="ruleForm.repeatControl"></el-switch>
             </el-form-item>
+            <el-form-item label="Пауза после ритма" prop="restEnable">
+                <el-switch v-model="ruleForm.restEnable"></el-switch>
+            </el-form-item>
 
             <el-form-item label="Длина трека" prop="trackLength">
                 <el-input-number v-model="ruleForm.trackLength" :min="1" :max="10000"></el-input-number>
@@ -42,6 +45,7 @@
                     beat: '1 2',
                     noteCount: 14,
                     repeatControl: true,
+                    restEnable: true,
                     trackLength: 5,
                     typeLength: 'note'
                 },

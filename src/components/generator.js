@@ -21,7 +21,7 @@ function randomInteger(min, max, isRepeatedControl) {
 
 const notes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
 
-function generator({beat, noteCount, repeatControl, trackLength, typeLength}) {
+function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable}) {
     let track = new MidiWriter.Track();
     let events = [];
 
@@ -29,10 +29,21 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength}) {
         trackLength = trackLength * 32;
     }
 
+    let curS = 0;
     for (let i = 0; i < trackLength;){
         beat.forEach(r => {
             if(i < trackLength) {
-                events.push(new MidiWriter.NoteEvent({pitch: [notes[randomInteger(0,noteCount-1, repeatControl)]], duration: 'T' + (r * 8)}));
+                events.push(
+                    new MidiWriter.NoteEvent({
+                        pitch: [
+                            notes[randomInteger(0,noteCount-1, repeatControl)]],
+                            duration: 'T' + (r * 8),
+                            startTick: restEnable === true ? curS : null
+                    })
+                );
+                if(restEnable){
+                    curS = curS+r*8;
+                }
             }
             if(typeLength === 'note') {
                 i++;
@@ -41,6 +52,12 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength}) {
                 i = i + r;
             }
         });
+        if (typeLength === 'sec' && restEnable) {
+            i = i + 16;
+        }
+        if(restEnable){
+            curS = curS+128;
+        }
     }
 
     track.addEvent(events, function(event, index) {
