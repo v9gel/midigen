@@ -32,10 +32,10 @@
 </template>
 
 <script>
-    import generator from "@/components/generator";
+    import generator from "./generator";
 
     export default {
-        name: "Generator",
+        name: "GeneratorMidi",
         data() {
             return {
                 ruleForm: {
@@ -75,9 +75,7 @@
                         });
                         console.log(params.beat);
 
-
                         let content = generator(params).substr(23);
-                        // let content = 'TVRoZAAAAAYAAAABAIBNVHJrAAAAZACQPkAIgD5AAJBAQBCAQEAAkD5AIIA+QACQPEBAgDxAAJA+QCCAPkAAkD5AMIA+QACQPEAIgDxAAJA+QBCAPkAAkDxAIIA8QACQPkBAgD5AAJA+QCCAPkAAkEBAMIBAQAD/LwA=';
                         var uriContent = "data:audio/midi;base64," + encodeURIComponent(content);
                         window.open(uriContent);
                     } else {

@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <Generator></Generator>
+    <GeneratorMidi></GeneratorMidi>
   </div>
 </template>
 
 <script>
-import Generator from './components/Generator';
 
+import GeneratorMidi from "./components/GeneratorMidi";
 export default {
   name: 'App',
   components: {
-    Generator
+    GeneratorMidi
   }
 }
 </script>
