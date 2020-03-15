@@ -19,9 +19,23 @@ function randomInteger(min, max, isRepeatedControl) {
     }
 }
 
+function randomBeat() {
+    function randomInteger(min, max) {
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        return  Math.round(rand);
+    }
+
+    let randomLenth = randomInteger(5, 25);
+    let beat = [];
+    for(let i = 0; i < randomLenth; i++){
+        beat.push(randomInteger(1,32));
+    }
+    return beat;
+}
+
 const notes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
 
-function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable}) {
+function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat}) {
     let track = new MidiWriter.Track();
     let events = [];
 
@@ -31,6 +45,10 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
 
     let curS = 0;
     for (let i = 0; i < trackLength;){
+        if(isRandomBeat){
+            beat = randomBeat();
+        }
+
         beat.forEach(r => {
             if(i < trackLength) {
                 events.push(
@@ -60,7 +78,7 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
         }
     }
 
-    track.addEvent(events, function(event, index) {
+    track.setTempo(30).addEvent(events, function(event, index) {
             event;
             index;
             return {sequential: true};

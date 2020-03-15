@@ -1,9 +1,15 @@
 <template>
     <div>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px">
+        <el-form :model="ruleForm" label-position="left" :rules="rules" ref="ruleForm" label-width="250px">
             <el-form-item label="Входной ритм" prop="beat">
-                <el-input type="textarea" v-model="ruleForm.beat"></el-input>
+                <el-input type="textarea" v-model="ruleForm.beat" :disabled="ruleForm.isRandomBeat"></el-input>
+                <el-button type="default" @click="randomBeat()" :disabled="ruleForm.isRandomBeat" style="margin-top: 25px">Сгенерировать рандомный ритм</el-button>
             </el-form-item>
+
+            <el-form-item label="Рандомный ритм для фрагментов" prop="repeatControl">
+                <el-switch v-model="ruleForm.isRandomBeat"></el-switch>
+            </el-form-item>
+
             <el-form-item label="Диапазон нот" prop="noteCount">
                 <el-input-number v-model="ruleForm.noteCount" :min="2" :max="14"></el-input-number>
             </el-form-item>
@@ -47,7 +53,8 @@
                     repeatControl: true,
                     restEnable: true,
                     trackLength: 5,
-                    typeLength: 'note'
+                    typeLength: 'note',
+                    isRandomBeat: false
                 },
                 rules: {
                     beat: [
@@ -64,6 +71,18 @@
             };
         },
         methods:{
+            randomBeat(){
+                function randomInteger(min, max) {
+                    let rand = min - 0.5 + Math.random() * (max - min + 1);
+                    return  Math.round(rand);
+                }
+
+                let randomLenth = randomInteger(5, 25);
+                this.ruleForm.beat = '';
+                for(let i = 0; i < randomLenth; i++){
+                    this.ruleForm.beat = this.ruleForm.beat + randomInteger(1,32) + ' ';
+                }
+            },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
