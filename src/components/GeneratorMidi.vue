@@ -76,11 +76,16 @@
                     let rand = min - 0.5 + Math.random() * (max - min + 1);
                     return  Math.round(rand);
                 }
-
-                let randomLenth = randomInteger(5, 25);
+                const beatConst = [2,4,8];
+                let curLength = 0;
                 this.ruleForm.beat = '';
-                for(let i = 0; i < randomLenth; i++){
-                    this.ruleForm.beat = this.ruleForm.beat + randomInteger(1,32) + ' ';
+                while(curLength < 64){
+                    let be = beatConst[randomInteger(0,2)];
+                    this.ruleForm.beat = this.ruleForm.beat + be + ' ';
+                    curLength = curLength + be;
+                    if(randomInteger(0,20) < 10 && curLength > 16){
+                        break;
+                    }
                 }
             },
             submitForm(formName) {
