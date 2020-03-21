@@ -41,7 +41,7 @@ function randomBeat() {
 
 const notes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
 
-function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat}) {
+function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat, shortNote}, returnArray) {
     let track = new MidiWriter.Track();
     let events = [];
 
@@ -61,13 +61,11 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
                     new MidiWriter.NoteEvent({
                         pitch: [
                             notes[randomInteger(0,noteCount-1, repeatControl)]],
-                            duration: 'T' + (r * 8),
-                            startTick: restEnable === true ? curS : null
+                            duration: shortNote === true ? 'T4' : 'T' + r * 8,
+                            startTick: curS
                     })
                 );
-                if(restEnable){
-                    curS = curS+r*8;
-                }
+                curS = curS+r*8;
             }
             if(typeLength === 'note') {
                 i++;
@@ -76,9 +74,13 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
                 i = i + r;
             }
         });
+        if(typeLength === 'beat') {
+            i++;
+        }
         if (typeLength === 'sec' && restEnable) {
             i = i + 16;
         }
+
         if(restEnable){
             curS = curS+128;
         }
@@ -92,13 +94,13 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
     );
 
     var write = new MidiWriter.Writer(track);
-    return write.dataUri();
+    if(returnArray){
+        return write.buildFile();
+    }
+    else{
+        return write.dataUri();
+    }
 }
 
 export default generator;
-//
-// var ritm = [1,2,4,8,4,6];
-// var diap = 3;
-// generator(ritm, diap, true, 56, 'note');
-
 

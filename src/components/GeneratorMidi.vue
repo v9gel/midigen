@@ -16,6 +16,9 @@
             <el-form-item label="Предотвращать повторы" prop="repeatControl">
                 <el-switch v-model="ruleForm.repeatControl"></el-switch>
             </el-form-item>
+            <el-form-item label="Короткие ноты" prop="shortNote">
+                <el-switch v-model="ruleForm.shortNote"></el-switch>
+            </el-form-item>
             <el-form-item label="Пауза после ритма" prop="restEnable">
                 <el-switch v-model="ruleForm.restEnable"></el-switch>
             </el-form-item>
@@ -32,6 +35,9 @@
                     </el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="Количество файлов" prop="filesCount">
+                <el-input-number v-model="ruleForm.filesCount" :min="1" :max="50"></el-input-number>
+            </el-form-item>
 
             <el-form-item>
                 <el-button type="primary" @click="submitForm('ruleForm')">Сохранить трек</el-button>
@@ -42,6 +48,7 @@
 
 <script>
     import generator from "./generator";
+    import * as JSZip from "jszip";
 
     export default {
         name: "GeneratorMidi",
@@ -52,9 +59,11 @@
                     noteCount: 14,
                     repeatControl: true,
                     restEnable: true,
+                    shortNote: true,
                     trackLength: 5,
                     typeLength: 'note',
-                    isRandomBeat: false
+                    isRandomBeat: false,
+                    filesCount: 2
                 },
                 rules: {
                     beat: [
@@ -67,6 +76,9 @@
                 }, {
                     value: 'note',
                     label: 'Нот'
+                }, {
+                    value: 'beat',
+                    label: 'Ритмов'
                 }]
             };
         },
@@ -96,16 +108,26 @@
                             beat.push(parseInt(element));
                         });
 
-
                         let params = Object.assign({}, this.ruleForm);
                         params.beat = beat.filter(function (value) {
                             return !Number.isNaN(value);
                         });
-                        console.log(params.beat);
 
-                        let content = generator(params).substr(23);
-                        var uriContent = "data:audio/midi;base64," + encodeURIComponent(content);
-                        window.open(uriContent);
+                        if(params.filesCount === 1){
+                            let content = generator(params, false).substr(23);
+                            var uriContent = "data:audio/midi;base64," + encodeURIComponent(content);
+                            window.open(uriContent);
+                        }else {
+                            var zip = new JSZip();
+                            for(let i = 0; i < params.filesCount; i++){
+                                let content = generator(params, true);
+                                zip.file((i + 1) + ".mid", content);
+                            }
+
+                            zip.generateAsync({type:"base64"}).then(function (base64) {
+                                window.open("data:application/zip;base64," + base64);
+                            });
+                        }
                     } else {
                         console.log('error submit!!');
                         return false;
