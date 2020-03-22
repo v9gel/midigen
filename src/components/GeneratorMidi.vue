@@ -13,6 +13,9 @@
             <el-form-item label="Диапазон нот" prop="noteCount">
                 <el-input-number v-model="ruleForm.noteCount" :min="2" :max="14"></el-input-number>
             </el-form-item>
+            <el-form-item label="Длинна ритма" prop="beatLength">
+                <el-input-number v-model="ruleForm.beatLength" :min="2" :max="20"></el-input-number>
+            </el-form-item>
             <el-form-item label="Предотвращать повторы" prop="repeatControl">
                 <el-switch v-model="ruleForm.repeatControl"></el-switch>
             </el-form-item>
@@ -41,11 +44,17 @@
 
             <el-form-item>
                 <el-button type="primary" @click="submitForm('ruleForm')">Сгенерировать</el-button>
+                <el-button type="default" @click="saveConfig('ruleForm')">Запомнить конфиг</el-button>
             </el-form-item>
         </el-form>
 
+        <el-form :model="ruleForm" label-position="left" :rules="rules" ref="ruleForm" label-width="250px">
+            <el-form-item label="Скорость воспроизведения">
+                <el-input-number v-model="ruleForm.speed" @change="changeSpeed" :min="1" :max="1024"></el-input-number>
+            </el-form-item>
+        </el-form>
         <ul v-for="(track, i) in tracks" :key="i">
-            <Track :track="track"/>
+            <Track :track="track" :speed="ruleForm.speed"/>
         </ul>
     </div>
 </template>
@@ -64,6 +73,11 @@
     export default {
         name: "GeneratorMidi",
         components: {Track},
+        computed: {
+          speed(){
+              return this.store.speed;
+          }
+        },
         data() {
             return {
                 ruleForm: {
@@ -71,6 +85,7 @@
                     noteCount: 14,
                     repeatControl: true,
                     restEnable: true,
+                    beatLength: 6,
                     shortNote: true,
                     trackLength: 5,
                     typeLength: 'note',
@@ -96,6 +111,10 @@
             };
         },
         methods:{
+            changeSpeed(value){
+                this.$root.$emit('all stop');
+                this.$store.commit('changeSpeed', value);
+            },
             randomBeat(){
                 function randomInteger(min, max) {
                     let rand = min - 0.5 + Math.random() * (max - min + 1);
@@ -112,6 +131,17 @@
                         break;
                     }
                 }
+            },
+            saveConfig(formName){
+                console.log(1)
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.$root.$localStorage.set('config', this.ruleForm);
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
             },
             submitForm(formName) {
                 this.$root.$emit('all stop');
@@ -158,6 +188,12 @@
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            }
+        },
+        mounted(){
+            console.log( this.$root.$localStorage.get('config'));
+            if(this.$root.$localStorage.get('config') !== null){
+                this.ruleForm =  this.$root.$localStorage.get('config');
             }
         }
     }

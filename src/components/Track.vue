@@ -23,7 +23,12 @@
                 name: this.name = 'track' + uuidv4() + '.mid'
             }
         },
-        props: ['track'],
+        // computed: {
+        //     speed(){
+        //         return this.store.speed;
+        //     }
+        // },
+        props: ['track', 'speed'],
         methods: {
             async play(){
                 this.$root.$emit('all stop');
@@ -41,17 +46,20 @@
                             if (event.name === 'Note on' && event.velocity > 0) {
                                 instrument.play(event.noteName, ac.currentTime, {
                                     gain: event.velocity / 100,
-                                    duration: event.delta
+                                    duration: 1
                                 });
+                                console.log(event)
                             }
                         });
 
                         Player.loadDataUri(vue.track);
                         Player.play();
+                        Player.setTempo(vue.speed);
+                        // Player.setTempo(vue.speed);
 
                         vue.$root.$on('all stop', () => {
                             Player.stop();
-                        })
+                        });
 
 
                         // Player.on('playing', function() {
