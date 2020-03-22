@@ -14,7 +14,7 @@
                 <el-input-number v-model="ruleForm.noteCount" :min="2" :max="14"></el-input-number>
             </el-form-item>
             <el-form-item label="Длинна ритма" prop="beatLength">
-                <el-input-number v-model="ruleForm.beatLength" :min="2" :max="20"></el-input-number>
+                <el-input-number v-model="ruleForm.beatLength" :min="1" :max="128"></el-input-number> / 32 такта
             </el-form-item>
             <el-form-item label="Предотвращать повторы" prop="repeatControl">
                 <el-switch v-model="ruleForm.repeatControl"></el-switch>
@@ -81,16 +81,17 @@
         data() {
             return {
                 ruleForm: {
-                    beat: '1 2',
+                    beat: '2 4 8',
                     noteCount: 14,
                     repeatControl: true,
                     restEnable: true,
-                    beatLength: 6,
+                    beatLength: 32,
                     shortNote: true,
                     trackLength: 5,
                     typeLength: 'note',
                     isRandomBeat: false,
-                    filesCount: 2
+                    filesCount: 2,
+                    speed: 30
                 },
                 tracks: [],
                 rules: {

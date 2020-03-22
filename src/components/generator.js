@@ -19,7 +19,8 @@ function randomInteger(min, max, isRepeatedControl) {
     }
 }
 
-function randomBeat() {
+function randomBeat(beatLeangth) {
+    beatLeangth = beatLeangth * 4;
     function randomInteger(min, max) {
         let rand = min - 0.5 + Math.random() * (max - min + 1);
         return  Math.round(rand);
@@ -28,14 +29,32 @@ function randomBeat() {
 
     let curLength = 0;
     let beat = [];
-    while(curLength < 64){
+    while(curLength <= beatLeangth - 8){
         let be = beatConst[randomInteger(0,2)];
-        beat.push(beatConst[randomInteger(0,2)]);
+        beat.push(be);
         curLength = curLength + be;
-        if(randomInteger(0,20) < 10 && curLength > 16){
-            break;
-        }
+        // if(randomInteger(0,20) < 10 && curLength > 16){
+        //     break;
+        // }
     }
+
+    if(curLength === beatLeangth - 6){
+        beat.push(2);
+        beat.push(4);
+        curLength += 6;
+    }else if(curLength === beatLeangth - 4){
+        beat.push(4);
+        curLength += 4;
+    }else if(curLength === beatLeangth - 2){
+        beat.push(2);
+        curLength += 2;
+    }
+    // console.log('li', curLength);
+
+    // if(curLength - 64 > 0){
+    //     beat[beat.length-1] = beat[beat.length-1]  - (curLength - 64);
+    //     console.log('li', beat[beat.length-1]);
+    // }
     return beat;
 }
 
