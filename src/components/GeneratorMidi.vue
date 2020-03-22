@@ -114,6 +114,7 @@
                 }
             },
             submitForm(formName) {
+                this.$root.$emit('all stop');
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         let beat = [];
