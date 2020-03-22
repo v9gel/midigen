@@ -40,18 +40,30 @@
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">Сохранить трек</el-button>
+                <el-button type="primary" @click="submitForm('ruleForm')">Сгенерировать</el-button>
             </el-form-item>
         </el-form>
+
+        <ul v-for="(track, i) in tracks" :key="i">
+            <Track :track="track"/>
+        </ul>
     </div>
 </template>
 
 <script>
     import generator from "./generator";
-    import * as JSZip from "jszip";
+    import { v4 as uuidv4 } from 'uuid';
+    // import * as JSZip from "jszip";
+    import Track from "@/components/Track";
+
+    // eslint-disable-next-line no-unused-vars
+    function uu(){
+        return uuidv4();
+    }
 
     export default {
         name: "GeneratorMidi",
+        components: {Track},
         data() {
             return {
                 ruleForm: {
@@ -65,6 +77,7 @@
                     isRandomBeat: false,
                     filesCount: 2
                 },
+                tracks: [],
                 rules: {
                     beat: [
                         {required: true, pattern: /^([ ]*[0-9]*[ ]*)*$/gs, message: 'Ритм должен содержать только числа, разделенные пробелом в одну строку', trigger: 'blur' },
@@ -114,20 +127,28 @@
                         });
 
                         if(params.filesCount === 1){
-                            let content = generator(params, false).substr(23);
-                            var uriContent = "data:audio/midi;base64," + encodeURIComponent(content);
-                            window.open(uriContent);
+                            let content = generator(params, false);
+                            this.tracks = [content];
                         }else {
-                            var zip = new JSZip();
+                            // var zip = new JSZip();
+                            // for(let i = 0; i < params.filesCount; i++){
+                            //     let content = generator(params, true);
+                            //     zip.file((i + 1) + ".mid", content);
+                            // }
+                            //
+                            // zip.generateAsync({type:"base64"}).then(function (base64) {
+                            //     window.open("data:application/zip;base64," + base64);
+                            // });
+                            this.tracks = [];
                             for(let i = 0; i < params.filesCount; i++){
-                                let content = generator(params, true);
-                                zip.file((i + 1) + ".mid", content);
+                                let content = generator(params, false);
+                                this.tracks.push(content);
                             }
-
-                            zip.generateAsync({type:"base64"}).then(function (base64) {
-                                window.open("data:application/zip;base64," + base64);
-                            });
                         }
+
+                        this.$root.$emit('name generate', () => {
+
+                        })
                     } else {
                         console.log('error submit!!');
                         return false;
