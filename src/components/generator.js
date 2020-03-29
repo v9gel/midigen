@@ -60,7 +60,7 @@ function randomBeat(beatLeangth) {
 
 const notes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
 
-function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat, shortNote, beatLength}, returnArray) {
+function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat, shortNote, beatLength, oneBeatFile}, returnArray) {
     let track = new MidiWriter.Track();
     let events = [];
 
@@ -69,8 +69,9 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
     }
 
     let curS = 0;
+    beat = randomBeat(beatLength);
     for (let i = 0; i < trackLength;){
-        if(isRandomBeat){
+        if(isRandomBeat && !oneBeatFile){
             beat = randomBeat(beatLength);
         }
 

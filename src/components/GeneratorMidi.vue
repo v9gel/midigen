@@ -9,7 +9,9 @@
             <el-form-item label="Рандомный ритм для фрагментов" prop="repeatControl">
                 <el-switch v-model="ruleForm.isRandomBeat"></el-switch>
             </el-form-item>
-
+            <el-form-item label="Один бит на файл" prop="oneBeatFile">
+                <el-switch v-model="ruleForm.oneBeatFile"></el-switch>
+            </el-form-item>
             <el-form-item label="Диапазон нот" prop="noteCount">
                 <el-input-number v-model="ruleForm.noteCount" :min="2" :max="14"></el-input-number>
             </el-form-item>
@@ -91,7 +93,8 @@
                     typeLength: 'note',
                     isRandomBeat: false,
                     filesCount: 2,
-                    speed: 30
+                    speed: 30,
+                    oneBeatFile: false
                 },
                 tracks: [],
                 rules: {
