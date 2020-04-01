@@ -2,20 +2,22 @@ var MidiWriter = require('midi-writer-js');
 
 var oldNoteNumber = -10;
 function randomInteger(min, max, isRepeatedControl) {
-    let rand = min - 0.5 + Math.random() * (max - min + 1);
-    let value = Math.round(rand);
+    if(min === max) {
+        return 0;
+    }else {
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        let value = Math.round(rand);
 
-    if(isRepeatedControl){
-        if(value === oldNoteNumber) {
-            return randomInteger(min, max, isRepeatedControl);
-        }
-        else{
-            oldNoteNumber = value;
+        if (isRepeatedControl) {
+            if (value === oldNoteNumber) {
+                return randomInteger(min, max, isRepeatedControl);
+            } else {
+                oldNoteNumber = value;
+                return value;
+            }
+        } else {
             return value;
         }
-    }
-    else {
-        return value;
     }
 }
 

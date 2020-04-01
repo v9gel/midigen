@@ -13,7 +13,7 @@
     import MidiPlayer from 'midi-player-js';
     import Soundfont from 'soundfont-player';
     import { v4 as uuidv4 } from 'uuid';
-    import { save } from 'save-file'
+    // import { save } from 'save-file'
 
     export default {
         name: "Track",
@@ -80,14 +80,21 @@
                 // this.$root.$emit('all stop');
             },
             async download(){
-                await save(this.track, this.name)
+                let link = document.createElement('a');
+                link.download = this.name;
+                link.href = this.track;
+                link.click();
             }
         },
         mounted(){
             let vue = this;
             this.$root.$on('all stop', () => {
                 vue.stop()
-            })
+            });
+            this.$root.$on('all download', () => {
+                vue.stop();
+                this.download();
+            });
             vue.$root.$on('name generate', () => {
                 this.name = 'track' + uuidv4() + '.mid'
             })

@@ -13,13 +13,13 @@
                 <el-switch v-model="ruleForm.oneBeatFile"></el-switch>
             </el-form-item>
             <el-form-item label="Диапазон нот" prop="noteCount">
-                <el-input-number v-model="ruleForm.noteCount" :min="2" :max="14"></el-input-number>
+                <el-input-number v-model="ruleForm.noteCount" :min="1" :max="14"></el-input-number>
             </el-form-item>
             <el-form-item label="Длинна ритма" prop="beatLength">
                 <el-input-number v-model="ruleForm.beatLength" :min="1" :max="128"></el-input-number> / 32 такта
             </el-form-item>
             <el-form-item label="Предотвращать повторы" prop="repeatControl">
-                <el-switch v-model="ruleForm.repeatControl"></el-switch>
+                <el-switch v-model="ruleForm.repeatControl" :disabled="ruleForm.noteCount === 1"></el-switch>
             </el-form-item>
             <el-form-item label="Короткие ноты" prop="shortNote">
                 <el-switch v-model="ruleForm.shortNote"></el-switch>
@@ -55,6 +55,7 @@
                 <el-input-number v-model="ruleForm.speed" @change="changeSpeed" :min="1" :max="1024"></el-input-number>
             </el-form-item>
         </el-form>
+        <el-button type="danger" @click="downloadAll">Скачать все</el-button>
         <ul v-for="(track, i) in tracks" :key="i">
             <Track :track="track" :speed="ruleForm.speed"/>
         </ul>
@@ -115,6 +116,9 @@
             };
         },
         methods:{
+            downloadAll(){
+                this.$root.$emit('all download');
+            },
             changeSpeed(value){
                 this.$root.$emit('all stop');
                 this.$store.commit('changeSpeed', value);
