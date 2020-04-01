@@ -5,6 +5,9 @@
                 <el-input type="textarea" v-model="ruleForm.beat" :disabled="ruleForm.isRandomBeat"></el-input>
                 <el-button type="default" @click="randomBeat()" :disabled="ruleForm.isRandomBeat" style="margin-top: 25px">Сгенерировать рандомный ритм</el-button>
             </el-form-item>
+            <el-form-item label="Используемые длительности" prop="beatConst">
+                <el-input type="textarea" v-model="ruleForm.beatConst"></el-input>
+            </el-form-item>
 
             <el-form-item label="Рандомный ритм для фрагментов" prop="repeatControl">
                 <el-switch v-model="ruleForm.isRandomBeat"></el-switch>
@@ -86,6 +89,7 @@
                 ruleForm: {
                     beat: '2 4 8',
                     noteCount: 14,
+                    beatConst: "2 4 8",
                     repeatControl: true,
                     restEnable: true,
                     beatLength: 32,
@@ -101,6 +105,9 @@
                 rules: {
                     beat: [
                         {required: true, pattern: /^([ ]*[0-9]*[ ]*)*$/gs, message: 'Ритм должен содержать только числа, разделенные пробелом в одну строку', trigger: 'blur' },
+                    ],
+                    beatConst: [
+                        {required: true, pattern: /^([ ]*[0-9]*[ ]*)*$/gs, message: 'Допустимые длительности только числа, разделенные пробелом в одну строку', trigger: 'blur' },
                     ]
                 },
                 options: [{
@@ -112,6 +119,16 @@
                 }, {
                     value: 'beat',
                     label: 'Ритмов'
+                }],
+                options1: [{
+                    value: '2',
+                    label: '2'
+                }, {
+                    value: '4',
+                    label: '4'
+                }, {
+                    value: '8',
+                    label: '8'
                 }]
             };
         },
@@ -160,8 +177,16 @@
                             beat.push(parseInt(element));
                         });
 
+                        let beatConst = [];
+                        this.ruleForm.beatConst.split(' ').forEach(element => {
+                            beatConst.push(parseInt(element));
+                        });
+
                         let params = Object.assign({}, this.ruleForm);
                         params.beat = beat.filter(function (value) {
+                            return !Number.isNaN(value);
+                        });
+                        params.beatConst = beatConst.filter(function (value) {
                             return !Number.isNaN(value);
                         });
 
@@ -169,15 +194,6 @@
                             let content = generator(params, false);
                             this.tracks = [content];
                         }else {
-                            // var zip = new JSZip();
-                            // for(let i = 0; i < params.filesCount; i++){
-                            //     let content = generator(params, true);
-                            //     zip.file((i + 1) + ".mid", content);
-                            // }
-                            //
-                            // zip.generateAsync({type:"base64"}).then(function (base64) {
-                            //     window.open("data:application/zip;base64," + base64);
-                            // });
                             this.tracks = [];
                             for(let i = 0; i < params.filesCount; i++){
                                 let content = generator(params, false);

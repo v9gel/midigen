@@ -21,18 +21,18 @@ function randomInteger(min, max, isRepeatedControl) {
     }
 }
 
-function randomBeat(beatLeangth) {
+function randomBeat(beatLeangth, beatConst) {
     beatLeangth = beatLeangth * 4;
     function randomInteger(min, max) {
         let rand = min - 0.5 + Math.random() * (max - min + 1);
         return  Math.round(rand);
     }
-    const beatConst = [2,4,8];
+    // const beatConst = [2,4,8];
 
     let curLength = 0;
     let beat = [];
     while(curLength <= beatLeangth - 8){
-        let be = beatConst[randomInteger(0,2)];
+        let be = beatConst[randomInteger(0,beatConst.length-1)];
         beat.push(be);
         curLength = curLength + be;
         // if(randomInteger(0,20) < 10 && curLength > 16){
@@ -40,29 +40,24 @@ function randomBeat(beatLeangth) {
         // }
     }
 
-    if(curLength === beatLeangth - 6){
-        beat.push(2);
-        beat.push(4);
-        curLength += 6;
-    }else if(curLength === beatLeangth - 4){
-        beat.push(4);
-        curLength += 4;
-    }else if(curLength === beatLeangth - 2){
-        beat.push(2);
-        curLength += 2;
-    }
-    // console.log('li', curLength);
-
-    // if(curLength - 64 > 0){
-    //     beat[beat.length-1] = beat[beat.length-1]  - (curLength - 64);
-    //     console.log('li', beat[beat.length-1]);
+    // if(curLength === beatLeangth - 6){
+    //     beat.push(2);
+    //     beat.push(4);
+    //     curLength += 6;
+    // }else if(curLength === beatLeangth - 4){
+    //     beat.push(4);
+    //     curLength += 4;
+    // }else if(curLength === beatLeangth - 2){
+    //     beat.push(2);
+    //     curLength += 2;
     // }
+
     return beat;
 }
 
 const notes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
 
-function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat, shortNote, beatLength, oneBeatFile}, returnArray) {
+function generator({beat, noteCount, repeatControl, trackLength, typeLength, restEnable, isRandomBeat, shortNote, beatLength, oneBeatFile, beatConst}, returnArray) {
     let track = new MidiWriter.Track();
     let events = [];
 
@@ -71,10 +66,10 @@ function generator({beat, noteCount, repeatControl, trackLength, typeLength, res
     }
 
     let curS = 0;
-    beat = randomBeat(beatLength);
+    beat = randomBeat(beatLength, beatConst);
     for (let i = 0; i < trackLength;){
         if(isRandomBeat && !oneBeatFile){
-            beat = randomBeat(beatLength);
+            beat = randomBeat(beatLength, beatConst);
         }
 
         beat.forEach(r => {
