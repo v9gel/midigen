@@ -31,7 +31,7 @@ export default {
       name: (this.name = "track" + uuidv4() + ".mid"),
     };
   },
-  props: ["track", "speed"],
+  props: ["track", "speed", "index"],
   methods: {
     async play() {
       this.$root.$emit("all stop");
@@ -67,6 +67,7 @@ export default {
           });
           Player.on("endOfFile", function () {
             vue.stop();
+            vue.$root.$emit("play", vue.index+1);
             // todo следующий трек
           });
         });
@@ -93,6 +94,11 @@ export default {
     });
     vue.$root.$on("name generate", () => {
       this.name = "track" + uuidv4() + ".mid";
+    });
+    vue.$root.$on("play", (e) => {
+      if (e === vue.index){
+        this.play();
+      }
     });
   },
   destroyed() {

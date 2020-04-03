@@ -66,7 +66,7 @@
     </el-form>
     <el-button type="danger" v-if="tracks.length > 0" @click="downloadAll">Скачать все</el-button>
     <ul v-for="(track, i) in tracks" :key="i">
-      <Track :track="track" :speed="ruleForm.speed" />
+      <Track :track="track" :index="i" :speed="ruleForm.speed" />
     </ul>
   </div>
 </template>
