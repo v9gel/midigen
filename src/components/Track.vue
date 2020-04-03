@@ -44,7 +44,7 @@ export default {
       await setTimeout(function () {
         Soundfont.instrument(
           ac,
-          `https://raw.githubusercontent.com/gleitz/midi-js-soundfonts/gh-pages/MusyngKite/acoustic_grand_piano-mp3.js`
+          `acoustic_grand_piano-mp3.js`
         ).then((instrument) => {
           let Player = new MidiPlayer.Player(function (event) {
             if (!vue.playing) {

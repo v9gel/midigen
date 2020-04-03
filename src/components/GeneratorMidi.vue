@@ -18,6 +18,11 @@
           :max="14"
         ></el-input-number>
       </el-form-item>
+      <el-form-item label="4 одинаковых такта" prop="oneBeatFile">
+        <el-switch
+                v-model="ruleForm.oneBeatFile"
+        ></el-switch>
+      </el-form-item>
       <el-form-item label="Предотвращать повторы" prop="repeatControl">
         <el-switch
           v-model="ruleForm.repeatControl"
@@ -59,7 +64,7 @@
         ></el-input-number>
       </el-form-item>
     </el-form>
-    <el-button type="danger" @click="downloadAll">Скачать все</el-button>
+    <el-button type="danger" v-if="tracks.length > 0" @click="downloadAll">Скачать все</el-button>
     <ul v-for="(track, i) in tracks" :key="i">
       <Track :track="track" :speed="ruleForm.speed" />
     </ul>

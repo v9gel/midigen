@@ -1,6 +1,23 @@
-var MidiWriter = require("midi-writer-js");
+const MidiWriter = require("midi-writer-js");
 
+const notes = [
+  "C4",
+  "D4",
+  "E4",
+  "F4",
+  "G4",
+  "A4",
+  "B4",
+  "C5",
+  "D5",
+  "E5",
+  "F5",
+  "G5",
+  "A5",
+  "B5",
+];
 var oldNoteNumber = -10;
+
 function randomInteger(min, max, isRepeatedControl = false) {
   if (min === max) {
     return 0;
@@ -21,7 +38,7 @@ function randomInteger(min, max, isRepeatedControl = false) {
   }
 }
 
-function randomBeat(beatConst) {
+function randomBeat(beatConst, { noteCount, repeatControl }) {
   let beatLength = 128;
 
   let curLength = 0;
@@ -31,43 +48,33 @@ function randomBeat(beatConst) {
     if (curLength + be > beatLength) {
       be = beatLength - curLength;
     }
-    beat.push(be);
+    beat.push({
+      duration: be,
+      pitch: notes[randomInteger(0, noteCount - 1, repeatControl)],
+    });
     curLength = curLength + be;
   }
   return beat;
 }
 
-const notes = [
-  "C4",
-  "D4",
-  "E4",
-  "F4",
-  "G4",
-  "A4",
-  "B4",
-  "C5",
-  "D5",
-  "E5",
-  "F5",
-  "G5",
-  "A5",
-  "B5",
-];
-
 function generator({ noteCount, repeatControl, oneBeatFile, beatConst }) {
-  oneBeatFile;
   let track = new MidiWriter.Track();
   let events = [];
 
-  let beat = randomBeat(beatConst);
-  beat.forEach((r) => {
-    events.push(
-      new MidiWriter.NoteEvent({
-        pitch: [notes[randomInteger(0, noteCount - 1, repeatControl)]],
-        duration: "T" + r * 4,
-      })
-    );
-  });
+  let beat = randomBeat(beatConst, { noteCount, repeatControl });
+  for (let i = 0; i < 4; i++) {
+    if (!oneBeatFile) {
+      beat = randomBeat(beatConst, {noteCount, repeatControl});
+    }
+    beat.forEach((one) => {
+      events.push(
+          new MidiWriter.NoteEvent({
+            pitch: one.pitch,
+            duration: "T" + one.duration * 4,
+          })
+      );
+    });
+  }
 
   track.setTempo(30).addEvent(events, function (event, index) {
     event;
