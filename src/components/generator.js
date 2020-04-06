@@ -57,24 +57,19 @@ function randomBeat(beatConst, { noteCount, repeatControl }) {
   return beat;
 }
 
-function generator({ noteCount, repeatControl, oneBeatFile, beatConst }) {
+function generator({ noteCount, repeatControl, beatConst }) {
   let track = new MidiWriter.Track();
   let events = [];
 
   let beat = randomBeat(beatConst, { noteCount, repeatControl });
-  for (let i = 0; i < 4; i++) {
-    if (!oneBeatFile) {
-      beat = randomBeat(beatConst, {noteCount, repeatControl});
-    }
-    beat.forEach((one) => {
-      events.push(
-          new MidiWriter.NoteEvent({
-            pitch: one.pitch,
-            duration: "T" + one.duration * 4,
-          })
-      );
-    });
-  }
+  beat.forEach((one) => {
+    events.push(
+      new MidiWriter.NoteEvent({
+        pitch: one.pitch,
+        duration: "T" + one.duration * 4,
+      })
+    );
+  });
 
   track.setTempo(30).addEvent(events, function (event, index) {
     event;

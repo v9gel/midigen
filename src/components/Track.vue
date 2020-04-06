@@ -41,11 +41,9 @@ export default {
       const ac = new AudioContext();
 
       let vue = this;
-      await setTimeout(function () {
-        Soundfont.instrument(
-          ac,
-          `acoustic_grand_piano-mp3.js`
-        ).then((instrument) => {
+
+      Soundfont.instrument(ac, `acoustic_grand_piano-mp3.js`).then(
+        (instrument) => {
           let Player = new MidiPlayer.Player(function (event) {
             if (!vue.playing) {
               Player.stop();
@@ -55,7 +53,6 @@ export default {
                 gain: event.velocity / 100,
                 duration: 1,
               });
-              // console.log(event);
             }
           });
 
@@ -67,11 +64,12 @@ export default {
           });
           Player.on("endOfFile", function () {
             vue.stop();
-            vue.$root.$emit("play", vue.index+1);
-            // todo следующий трек
+            setTimeout(function () {
+              vue.$root.$emit("play", vue.index + 1);
+            }, 2000);
           });
-        });
-      }, 0);
+        }
+      );
     },
     stop() {
       this.playing = false;
@@ -96,7 +94,7 @@ export default {
       this.name = "track" + uuidv4() + ".mid";
     });
     vue.$root.$on("play", (e) => {
-      if (e === vue.index){
+      if (e === vue.index) {
         this.play();
       }
     });

@@ -18,11 +18,6 @@
           :max="14"
         ></el-input-number>
       </el-form-item>
-      <el-form-item label="4 одинаковых такта" prop="oneBeatFile">
-        <el-switch
-                v-model="ruleForm.oneBeatFile"
-        ></el-switch>
-      </el-form-item>
       <el-form-item label="Предотвращать повторы" prop="repeatControl">
         <el-switch
           v-model="ruleForm.repeatControl"
@@ -74,7 +69,7 @@
 <script>
 import generator from "./generator";
 import { v4 as uuidv4 } from "uuid";
-// import * as JSZip from "jszip";
+import getRandomElement from "./helpers";
 import Track from "@/components/Track";
 
 // eslint-disable-next-line no-unused-vars
@@ -94,7 +89,6 @@ export default {
     return {
       ruleForm: {
         beatConst: "2 4 8",
-        oneBeatFile: false,
         noteCount: 14,
         repeatControl: true,
         filesCount: 2,
@@ -134,6 +128,7 @@ export default {
       });
     },
     submitForm(formName) {
+      getRandomElement([1]);
       this.$root.$emit("all stop");
       this.$refs[formName].validate((valid) => {
         if (valid) {
