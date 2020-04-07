@@ -13,11 +13,15 @@ export default new Vuex.Store({
     tracks: [],
   },
   mutations: {
+    start(state, value) {
+      state.tracks = value;
+    },
     changeSpeed(state, value) {
       state.speed = value;
     },
     delete(state, value) {
       state.tracks.splice(value, 1);
+      Vue.$localStorage.set("tracks", state.tracks);
     },
     add(state, { index, ruleForm }) {
       for (let i = 0; i < ruleForm.filesCount; i++) {
@@ -44,7 +48,7 @@ export default new Vuex.Store({
           oldPitch = curPitch;
         }
 
-        console.log(tmp)
+        console.log(tmp);
 
         tmp.beat.forEach((one) => {
           events.push(
@@ -63,11 +67,13 @@ export default new Vuex.Store({
 
         let write = new MidiWriter.Writer(track);
 
-        state.tracks.push({
+        state.tracks.splice(index, 0, {
           beat: tmp.beat,
           name: name,
           track: write.dataUri(),
         });
+
+        Vue.$localStorage.set("tracks", state.tracks);
       }
     },
     generateBeat(state, ruleForm) {
@@ -101,6 +107,7 @@ export default new Vuex.Store({
 
         state.tracks.push({ beat: tmp, name: name, track: write.dataUri() });
       }
+      Vue.$localStorage.set("tracks", state.tracks);
     },
   },
   actions: {},

@@ -268,6 +268,9 @@ export default {
     if (this.$root.$localStorage.get("config") !== null) {
       this.ruleForm = this.$root.$localStorage.get("config");
     }
+    if (this.$root.$localStorage.get("tracks") !== null) {
+      this.$store.commit('start', this.$root.$localStorage.get("tracks"));
+    }
   },
 };
 </script>
