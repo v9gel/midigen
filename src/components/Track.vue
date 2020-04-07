@@ -1,7 +1,7 @@
 <template>
   <li v-on:allStop="stop">
     {{ name }}
-    <el-button-group>
+    <el-button-group style="margin-right: 0">
       <el-button size="small" type="primary" v-if="!playing" @click="play"
         >play</el-button
       >
@@ -19,19 +19,22 @@
 </template>
 
 <script>
+import MidiWriter from "midi-writer-js";
 import MidiPlayer from "midi-player-js";
 import Soundfont from "soundfont-player";
-import { v4 as uuidv4 } from "uuid";
+import ShortUniqueId from "short-unique-id";
+const uid = new ShortUniqueId();
 
 export default {
   name: "Track",
   data() {
     return {
       playing: false,
-      name: (this.name = "track" + uuidv4() + ".mid"),
+      name: (this.name = "track" + uid.randomUUID(6) + ".mid"),
+      track: "",
     };
   },
-  props: ["track", "speed", "index"],
+  props: ["beat", "firstLevel", "speed", "index", "noteConst"],
   methods: {
     async play() {
       this.$root.$emit("all stop");
@@ -74,6 +77,30 @@ export default {
     stop() {
       this.playing = false;
     },
+    midiGeneration() {
+      let track = new MidiWriter.Track();
+      let events = [];
+      this.beat.forEach((one) => {
+        if (this.firstLevel) {
+          one.pitch = "C4";
+        }
+        events.push(
+          new MidiWriter.NoteEvent({
+            pitch: one.pitch,
+            duration: "T" + one.duration * 4,
+          })
+        );
+      });
+
+      track.setTempo(30).addEvent(events, function (event, index) {
+        event;
+        index;
+        return { sequential: true };
+      });
+
+      let write = new MidiWriter.Writer(track);
+      this.track = write.dataUri();
+    },
     async download() {
       let link = document.createElement("a");
       link.download = this.name;
@@ -91,13 +118,15 @@ export default {
       this.download();
     });
     vue.$root.$on("name generate", () => {
-      this.name = "track" + uuidv4() + ".mid";
+      this.name = "track" + uid.randomUUID(6) + ".mid";
     });
     vue.$root.$on("play", (e) => {
       if (e === vue.index) {
         this.play();
       }
     });
+
+    this.midiGeneration();
   },
   destroyed() {
     this.stop();

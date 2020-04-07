@@ -15,6 +15,8 @@
     "midi-player-js": "^2.0.5",
     "midi-writer-js": "^1.7.2",
     "save-file": "^2.3.1",
+    "short-unique-id": "^2.0.6",
+    "shortid": "^2.2.15",
     "soundfont-player": "^0.12.0",
     "uuid": "^7.0.2",
     "vue": "^2.6.11",
@@ -44,7 +46,11 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": "off",
+      "vue/no-unused-vars": "off",
+      "no-constant-condition": "off"
+    }
   },
   "browserslist": [
     "> 1%",
