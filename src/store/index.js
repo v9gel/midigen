@@ -26,7 +26,7 @@ export default new Vuex.Store({
     add(state, { index, ruleForm }) {
       for (let i = 0; i < ruleForm.filesCount; i++) {
         let tmp = Object.assign({}, state.tracks[index]);
-
+        let tmpBeat = [];
         let name = tmp.name.substr(0, 12) + "_" + uid.randomUUID(6) + ".mid";
 
         let track = new MidiWriter.Track();
@@ -44,13 +44,13 @@ export default new Vuex.Store({
               ruleForm.noteConst.filter((e) => e != oldPitch)
             );
           }
-          tmp.beat[i].pitch = curPitch;
+          tmpBeat.push({pitch: curPitch, duration: tmp.beat[i].duration});
           oldPitch = curPitch;
         }
 
         console.log(tmp);
 
-        tmp.beat.forEach((one) => {
+        tmpBeat.forEach((one) => {
           events.push(
             new MidiWriter.NoteEvent({
               pitch: one.pitch,
@@ -67,8 +67,8 @@ export default new Vuex.Store({
 
         let write = new MidiWriter.Writer(track);
 
-        state.tracks.splice(index, 0, {
-          beat: tmp.beat,
+        state.tracks.push( {
+          beat: tmpBeat,
           name: name,
           track: write.dataUri(),
         });

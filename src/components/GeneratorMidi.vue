@@ -76,7 +76,11 @@
       label-width="205px"
     >
     </el-form>
-    <el-table :data="tracks" style="width: 100%;">
+    <el-table
+      :data="tracks"
+      style="width: 100%;"
+      :row-class-name="tableRowClassName"
+    >
       <el-table-column label="Название" width="250">
         <template slot-scope="scope">
           <span style="margin-left: 10px;">{{ scope.row.name }}</span>
@@ -108,8 +112,17 @@
           ></el-input-number>
         </template>
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+          <el-button
+            @click="handlePlay(scope.$index)"
+            v-if="scope.$index !== played"
+            size="mini"
             >Play</el-button
+          >
+          <el-button
+            @click="handleStop()"
+            v-if="scope.$index === played"
+            size="mini"
+            >Stop</el-button
           >
           <el-button
             size="mini"
@@ -128,18 +141,20 @@
         </template>
       </el-table-column>
     </el-table>
+    <Player :speed="ruleForm.speed"></Player>
   </div>
 </template>
 
 <script>
+import Player from "./Player";
 export default {
   name: "GeneratorMidi",
+  components: { Player },
   computed: {
     speed() {
       return this.store.speed;
     },
     tracks() {
-      console.log(this.$store.tracks);
       return this.$store.state.tracks;
     },
   },
@@ -225,11 +240,24 @@ export default {
         },
       ],
       rules: {},
+      played: -1,
     };
   },
   methods: {
     downloadAll() {
       this.$root.$emit("all download");
+    },
+    handlePlay(index) {
+      this.$root.$emit("play", index);
+    },
+    handleStop() {
+      this.$root.$emit("all stop");
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex === this.played) {
+        return "played-row";
+      }
+      return "";
     },
     handleDownload(name, track) {
       let link = document.createElement("a");
@@ -269,10 +297,21 @@ export default {
       this.ruleForm = this.$root.$localStorage.get("config");
     }
     if (this.$root.$localStorage.get("tracks") !== null) {
-      this.$store.commit('start', this.$root.$localStorage.get("tracks"));
+      this.$store.commit("start", this.$root.$localStorage.get("tracks"));
     }
+    this.$root.$on("play", (e) => {
+      this.played = e;
+      this.play();
+    });
+    this.$root.$on("all stop", (e) => {
+      this.played = -1;
+    });
   },
 };
 </script>
 
-<style scoped></style>
+<style>
+.el-table .played-row {
+  background: #f0f9eb;
+}
+</style>
