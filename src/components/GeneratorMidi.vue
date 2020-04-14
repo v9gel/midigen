@@ -1,81 +1,9 @@
 <template>
   <div>
-    <el-form
-      :model="ruleForm"
-      label-position="left"
-      :rules="rules"
-      ref="ruleForm"
-      label-width="205px"
-    >
-      <el-form-item label="Используемые длительности" prop="beatConst">
-        <el-select
-          v-model="ruleForm.beatConst"
-          allow-create
-          filterable
-          default-first-option
-          multiple
-          placeholder="Select"
-        >
-          <el-option
-            v-for="item in options1"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="Используемые ноты" prop="noteConst">
-        <el-select
-          v-model="ruleForm.noteConst"
-          multiple
-          default-first-option
-          placeholder="Select"
-        >
-          <el-option
-            v-for="item in options2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="Предотвращать повторы" prop="repeatControl">
-        <el-switch
-          v-model="ruleForm.repeatControl"
-          :disabled="ruleForm.noteCount === 1"
-        ></el-switch>
-      </el-form-item>
-
-      <el-form-item label="Количество файлов" prop="filesCount">
-        <el-input-number
-          v-model="ruleForm.filesCount"
-          :min="1"
-          :max="50"
-        ></el-input-number>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')"
-          >Сгенерировать</el-button
-        >
-        <el-button type="default" @click="saveConfig('ruleForm')"
-          >Запомнить конфиг</el-button
-        >
-      </el-form-item>
-    </el-form>
-
-    <el-form
-      :model="ruleForm"
-      label-position="left"
-      :rules="rules"
-      ref="ruleForm"
-      label-width="205px"
-    >
-    </el-form>
+    <el-button-group>
+      <RecordBeat></RecordBeat>
+      <GenerateBeat></GenerateBeat>
+    </el-button-group>
     <el-table
       :data="tracks"
       style="width: 100%;"
@@ -83,7 +11,16 @@
     >
       <el-table-column label="Название" width="250">
         <template slot-scope="scope">
-          <span style="margin-left: 10px;">{{ scope.row.name }}</span>
+          <span style="margin-left: 10px;"
+            >{{ scope.row.name }}
+<!--            <el-button-->
+<!--              size="mini"-->
+<!--              type="default"-->
+<!--              icon="el-icon-edit"-->
+<!--              click="dialogVisible = true"-->
+<!--              circle-->
+<!--            ></el-button>-->
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="Бит">
@@ -130,7 +67,7 @@
             >Download</el-button
           >
           <el-button size="mini" @click="handleAdd(scope.$index, scope.row)"
-            >Add {{ ruleForm.filesCount }}</el-button
+            >Скопировать с рандомной звуковысотой</el-button
           >
           <el-button
             size="mini"
@@ -147,9 +84,11 @@
 
 <script>
 import Player from "./Player";
+import RecordBeat from "./RecordBeat";
+import GenerateBeat from "./GenerateBeat";
 export default {
   name: "GeneratorMidi",
-  components: { Player },
+  components: { GenerateBeat, RecordBeat, Player },
   computed: {
     speed() {
       return this.store.speed;
@@ -275,21 +214,6 @@ export default {
     changeSpeed(value) {
       this.$root.$emit("all stop");
       this.$store.commit("changeSpeed", value);
-    },
-    saveConfig(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.$root.$localStorage.set("config", this.ruleForm);
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-    submitForm(formName) {
-      this.$root.$emit("all stop");
-
-      this.$store.commit("generateBeat", Object.assign({}, this.ruleForm));
     },
   },
   mounted() {

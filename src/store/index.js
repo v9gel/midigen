@@ -34,7 +34,7 @@ export default new Vuex.Store({
 
         let oldPitch = "";
         for (let i = 0; i < tmp.beat.length; i++) {
-          let curPitch = getRandomElement(ruleForm.noteConst);
+          let curPitch = getRandomElement(["C4", "D4", "E4"]);
           if (
             ruleForm.repeatControl &&
             curPitch === oldPitch &&
@@ -44,7 +44,7 @@ export default new Vuex.Store({
               ruleForm.noteConst.filter((e) => e != oldPitch)
             );
           }
-          tmpBeat.push({pitch: curPitch, duration: tmp.beat[i].duration});
+          tmpBeat.push({ pitch: curPitch, duration: tmp.beat[i].duration });
           oldPitch = curPitch;
         }
 
@@ -67,7 +67,7 @@ export default new Vuex.Store({
 
         let write = new MidiWriter.Writer(track);
 
-        state.tracks.push( {
+        state.tracks.push({
           beat: tmpBeat,
           name: name,
           track: write.dataUri(),
@@ -76,14 +76,11 @@ export default new Vuex.Store({
         Vue.$localStorage.set("tracks", state.tracks);
       }
     },
+
     generateBeat(state, ruleForm) {
-      for (let i = 0; i < ruleForm.filesCount; i++) {
-        ruleForm.noteConst = ["C4"];
-        let tmp = randomBeat(
-          ruleForm.beatConst,
-          ruleForm.noteConst,
-          ruleForm.repeatControl
-        );
+      if (ruleForm.flagRecord) {
+        let tmp = ruleForm.beat;
+        let help = [];
         let name = "track_" + uid.randomUUID(6) + ".mid";
 
         let track = new MidiWriter.Track();
@@ -91,10 +88,14 @@ export default new Vuex.Store({
         tmp.forEach((one) => {
           events.push(
             new MidiWriter.NoteEvent({
-              pitch: one.pitch,
-              duration: "T" + one.duration * 4,
+              pitch: "C4",
+              duration: "T" + one * 4,
             })
           );
+          help.push({
+            pitch: "C4",
+            duration: one,
+          });
         });
 
         track.setTempo(30).addEvent(events, function (event, index) {
@@ -105,7 +106,38 @@ export default new Vuex.Store({
 
         let write = new MidiWriter.Writer(track);
 
-        state.tracks.push({ beat: tmp, name: name, track: write.dataUri() });
+        state.tracks.push({ beat: help, name: name, track: write.dataUri() });
+      } else {
+        for (let i = 0; i < ruleForm.filesCount; i++) {
+          ruleForm.noteConst = ["C4"];
+          let tmp = randomBeat(
+            ruleForm.beatConst,
+            ruleForm.noteConst,
+            ruleForm.repeatControl
+          );
+          let name = "track_" + uid.randomUUID(6) + ".mid";
+
+          let track = new MidiWriter.Track();
+          let events = [];
+          tmp.forEach((one) => {
+            events.push(
+              new MidiWriter.NoteEvent({
+                pitch: one.pitch,
+                duration: "T" + one.duration * 4,
+              })
+            );
+          });
+
+          track.setTempo(30).addEvent(events, function (event, index) {
+            event;
+            index;
+            return { sequential: true };
+          });
+
+          let write = new MidiWriter.Writer(track);
+
+          state.tracks.push({ beat: tmp, name: name, track: write.dataUri() });
+        }
       }
       Vue.$localStorage.set("tracks", state.tracks);
     },
