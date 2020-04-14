@@ -33,8 +33,16 @@ export default new Vuex.Store({
         let events = [];
 
         let oldPitch = "";
+        ruleForm = {
+          beatConst: ["2", "4"],
+          noteConst: ["C4", "D4", "E4"],
+          repeatControl: true,
+          filesCount: 1,
+          speed: 30,
+        };
+
         for (let i = 0; i < tmp.beat.length; i++) {
-          let curPitch = getRandomElement(["C4", "D4", "E4"]);
+          let curPitch = getRandomElement(ruleForm.noteConst);
           if (
             ruleForm.repeatControl &&
             curPitch === oldPitch &&
