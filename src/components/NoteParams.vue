@@ -11,7 +11,7 @@
         v-model="ruleForm.noteConst"
         multiple
         default-first-option
-        placeholder="Select"
+        placeholder="Выберите ноты"
         @change="onChangeNoteConst"
       >
         <el-option

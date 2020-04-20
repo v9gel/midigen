@@ -14,7 +14,7 @@
           filterable
           default-first-option
           multiple
-          placeholder="Select"
+          placeholder="Выберите длительности"
         >
           <el-option
             v-for="item in options1"
@@ -34,7 +34,10 @@
         ></el-input-number>
       </el-form-item>
 
-      <el-button type="primary" @click="submitForm('ruleForm')"
+      <el-button
+        type="primary"
+        :disabled="ruleForm.beatConst.length === 0"
+        @click="submitForm('ruleForm')"
         >Сгенерировать ритмы в колекцию</el-button
       >
       <el-button type="default" @click="saveConfig('ruleForm')"
