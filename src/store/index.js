@@ -10,9 +10,17 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     speed: 30,
+    noteConst: [],
+    repeatControl: true,
     tracks: [],
   },
   mutations: {
+    changeNoteConst(state, value) {
+      state.noteConst = value;
+    },
+    changeRepeatControl(state, value) {
+      state.repeatControl = value;
+    },
     start(state, value) {
       state.tracks = value;
     },
@@ -35,8 +43,8 @@ export default new Vuex.Store({
         let oldPitch = "";
         ruleForm = {
           beatConst: ["2", "4"],
-          noteConst: ["C4", "D4", "E4"],
-          repeatControl: true,
+          noteConst: Object.assign([], state.noteConst),
+          repeatControl: state.repeatControl,
           filesCount: 1,
           speed: 30,
         };

@@ -1,29 +1,23 @@
 <template>
   <div>
-    <el-button type="text" @click="dialogVisible = true"
-      >Записать новый ритм</el-button
-    >
-
-    <el-dialog
-      title="Запись нового ритма"
-      :visible.sync="dialogVisible"
-      width="70%"
-      :before-close="handleClose"
-    >
-      <div class="hello">
-        <p v-if="!start">
-          Для начала записи начните настукивать ритм c помощью клавиши Пробел
-        </p>
-        <p v-if="start">
-          Идет запись...
-        </p>
-        <p>Скорость 30BPM</p>
-        <p>Ритм: {{ beat.map((e) => Math.round(e / 65.5)) }}</p>
-        <el-button @click="reset">Сбросить</el-button
-        ><el-button @click="end">Стоп</el-button>
-        <br />
-      </div>
-    </el-dialog>
+    <div class="hello">
+      <p v-if="!start">
+        Для начала записи кликните по этому тексту и начните настукивать ритм c
+        помощью клавиши Пробел
+      </p>
+      <p v-if="start">
+        Идет запись...
+      </p>
+      <p>Скорость 30BPM</p>
+      <p>Ритм: {{ beat.map((e) => Math.round(e / 65.5)) }}</p>
+      <el-button :disabled="beat.length === 0" type="primary" @click="end"
+        >Добавить ритм в коллекцию</el-button
+      >
+      <el-button :disabled="beat.length === 0" @click="reset"
+        >Сбросить</el-button
+      >
+      <br />
+    </div>
   </div>
 </template>
 
@@ -32,7 +26,6 @@ export default {
   name: "RecordBeat",
   data() {
     return {
-      dialogVisible: false,
       i: 1,
       beat: [],
       start: false,
@@ -54,13 +47,6 @@ export default {
     });
   },
   methods: {
-    handleClose(done) {
-      this.$confirm("Подтвердите закрытие диалога")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
     reset() {
       this.i = 1;
       this.beat = [];

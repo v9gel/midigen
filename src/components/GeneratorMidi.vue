@@ -1,9 +1,16 @@
 <template>
   <div>
-    <el-button-group>
-      <RecordBeat></RecordBeat>
-      <GenerateBeat></GenerateBeat>
-    </el-button-group>
+    <el-collapse>
+      <el-collapse-item title="Записать ритм" name="1">
+        <RecordBeat></RecordBeat>
+      </el-collapse-item>
+      <el-collapse-item title="Сгенерировать ритм" name="2">
+        <GenerateBeat></GenerateBeat>
+      </el-collapse-item>
+      <el-collapse-item title="Параметры наложения звуковысоты" name="3">
+        <NoteParams></NoteParams>
+      </el-collapse-item>
+    </el-collapse>
     <el-table
       :data="tracks"
       style="width: 100%;"
@@ -13,13 +20,13 @@
         <template slot-scope="scope">
           <span style="margin-left: 10px;"
             >{{ scope.row.name }}
-<!--            <el-button-->
-<!--              size="mini"-->
-<!--              type="default"-->
-<!--              icon="el-icon-edit"-->
-<!--              click="dialogVisible = true"-->
-<!--              circle-->
-<!--            ></el-button>-->
+            <!--            <el-button-->
+            <!--              size="mini"-->
+            <!--              type="default"-->
+            <!--              icon="el-icon-edit"-->
+            <!--              click="dialogVisible = true"-->
+            <!--              circle-->
+            <!--            ></el-button>-->
           </span>
         </template>
       </el-table-column>
@@ -67,7 +74,7 @@
             >Download</el-button
           >
           <el-button size="mini" @click="handleAdd(scope.$index, scope.row)"
-            >Скопировать с рандомной звуковысотой</el-button
+            >Скопировать с наложением звуковысоты</el-button
           >
           <el-button
             size="mini"
@@ -86,9 +93,10 @@
 import Player from "./Player";
 import RecordBeat from "./RecordBeat";
 import GenerateBeat from "./GenerateBeat";
+import NoteParams from "./NoteParams";
 export default {
   name: "GeneratorMidi",
-  components: { GenerateBeat, RecordBeat, Player },
+  components: {NoteParams, GenerateBeat, RecordBeat, Player },
   computed: {
     speed() {
       return this.store.speed;
@@ -217,9 +225,6 @@ export default {
     },
   },
   mounted() {
-    if (this.$root.$localStorage.get("config") !== null) {
-      this.ruleForm = this.$root.$localStorage.get("config");
-    }
     if (this.$root.$localStorage.get("tracks") !== null) {
       this.$store.commit("start", this.$root.$localStorage.get("tracks"));
     }
