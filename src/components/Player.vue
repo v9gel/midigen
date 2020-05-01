@@ -47,16 +47,16 @@ export default {
         window.AudioContext || window.webkitAudioContext || false;
       const ac = new AudioContext();
       let vue = this;
-      Soundfont.instrument(ac, `acoustic_grand_piano-mp3.js`).then(
+      Soundfont.instrument(ac, `voice_oohs`).then(
         (instrument) => {
           let Player = new MidiPlayer.Player(function (event) {
             if (vue.played === -1) {
               Player.stop();
             }
             if (event.name === "Note on" && event.velocity > 0) {
+              console.log(event)
               instrument.play(event.noteName, ac.currentTime, {
-                gain: event.velocity / 100,
-                duration: 1,
+                gain: event.velocity,
               });
             }
           });
